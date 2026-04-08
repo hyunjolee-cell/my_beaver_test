@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>FieldOps</title>
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" rel="stylesheet">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap');
@@ -345,19 +345,164 @@ const S = {
   }
 }
 
-const API = '/api'
-const fetch2 = (url, opts) => fetch(url, { headers:{'Content-Type':'application/json'}, ...opts })
+
+// ============================================================
+// STATIC MODE: 인메모리 DB (GitHub Pages)
+// ============================================================
+const INIT_DB = {
+  jobs: [{"id":"j1","store_id":"s1","store_name":"강남 1호점","store_address":"서울 강남구 테헤란로 123","owner_name":"김점주","owner_phone":"010-1111-2222","lat":37.4985,"lng":127.028,"type":"신규설치","subtype":"POS 단말기","driver_id":"d1","driver_name":"홍길동","partner":"ABC협력사","status":"IN_PROGRESS","scheduled_date":"2026-04-08","scheduled_time":"09:00","checklist":[{"id":1,"label":"설치 위치 확인","checked":true,"na":false},{"id":2,"label":"전원 콘센트 확인","checked":true,"na":false},{"id":3,"label":"POS 본체 고정","checked":true,"na":false},{"id":4,"label":"모니터 케이블 연결","checked":false,"na":false},{"id":5,"label":"결제 단말기 연결","checked":false,"na":false},{"id":6,"label":"전원 ON 확인","checked":false,"na":false},{"id":7,"label":"초기 설정 완료","checked":false,"na":false},{"id":8,"label":"결제 테스트","checked":false,"na":false}],"photos":[],"signature":false,"note":"지하 1층 주차불가. 직원 동반 필요.","eta":"14:30","delay":15,"created_at":"2026-04-08T08:00:00","completed_at":"","approved_at":""},{"id":"j2","store_id":"s2","store_name":"서초 2호점","store_address":"서울 서초구 서초대로 456","owner_name":"이사장","owner_phone":"010-2222-3333","lat":37.487,"lng":127.005,"type":"AS방문","subtype":"키오스크","driver_id":"d2","driver_name":"이영희","partner":"ABC협력사","status":"DRIVING_TO","scheduled_date":"2026-04-08","scheduled_time":"11:00","checklist":[{"id":1,"label":"증상 청취","checked":false,"na":false},{"id":2,"label":"하드웨어 점검","checked":false,"na":false},{"id":3,"label":"소프트웨어 점검","checked":false,"na":false},{"id":4,"label":"수리 완료 확인","checked":false,"na":false},{"id":5,"label":"테스트 실행","checked":false,"na":false}],"photos":[],"signature":false,"note":"터치스크린 오작동 증상.","eta":"11:15","delay":0,"created_at":"2026-04-08T09:00:00","completed_at":"","approved_at":""},{"id":"j3","store_id":"s3","store_name":"대치 3호점","store_address":"서울 강남구 대치동 789","owner_name":"박대표","owner_phone":"010-3333-4444","lat":37.4924,"lng":127.0617,"type":"신규설치","subtype":"POS 단말기","driver_id":"d3","driver_name":"김철수","partner":"DEF협력사","status":"DISPATCHED","scheduled_date":"2026-04-08","scheduled_time":"14:00","checklist":[{"id":1,"label":"설치 위치 확인","checked":false,"na":false},{"id":2,"label":"전원 콘센트 확인","checked":false,"na":false},{"id":3,"label":"POS 본체 고정","checked":false,"na":false},{"id":4,"label":"모니터 케이블 연결","checked":false,"na":false},{"id":5,"label":"결제 단말기 연결","checked":false,"na":false},{"id":6,"label":"전원 ON 확인","checked":false,"na":false},{"id":7,"label":"초기 설정 완료","checked":false,"na":false},{"id":8,"label":"결제 테스트","checked":false,"na":false}],"photos":[],"signature":false,"note":"","eta":"14:00","delay":0,"created_at":"2026-04-08T09:30:00","completed_at":"","approved_at":""},{"id":"j4","store_id":"s4","store_name":"역삼 4호점","store_address":"서울 강남구 역삼로 101","owner_name":"최사장","owner_phone":"010-4444-5555","lat":37.5,"lng":127.037,"type":"POS교체","subtype":"POS 단말기","driver_id":null,"driver_name":"","partner":"","status":"UNASSIGNED","scheduled_date":"2026-04-08","scheduled_time":"16:00","checklist":[{"id":1,"label":"기존 POS 데이터 백업","checked":false,"na":false},{"id":2,"label":"기존 장비 철거","checked":false,"na":false},{"id":3,"label":"신규 장비 설치","checked":false,"na":false},{"id":4,"label":"데이터 이전","checked":false,"na":false},{"id":5,"label":"결제 테스트","checked":false,"na":false},{"id":6,"label":"영수증 출력 테스트","checked":false,"na":false}],"photos":[],"signature":false,"note":"구형 POS 1대 교체.","eta":"","delay":0,"created_at":"2026-04-08T10:00:00","completed_at":"","approved_at":""},{"id":"j5","store_id":"s5","store_name":"마포 5호점","store_address":"서울 마포구 마포대로 202","owner_name":"정대표","owner_phone":"010-5555-6666","lat":37.549,"lng":126.916,"type":"정기점검","subtype":"키오스크","driver_id":null,"driver_name":"","partner":"","status":"UNASSIGNED","scheduled_date":"2026-04-08","scheduled_time":"10:00","checklist":[{"id":1,"label":"외관 점검","checked":false,"na":false},{"id":2,"label":"화면 밝기 확인","checked":false,"na":false},{"id":3,"label":"결제 모듈 점검","checked":false,"na":false},{"id":4,"label":"영수증 프린터 점검","checked":false,"na":false},{"id":5,"label":"네트워크 연결 확인","checked":false,"na":false},{"id":6,"label":"소프트웨어 업데이트","checked":false,"na":false}],"photos":[],"signature":false,"note":"6개월 정기점검.","eta":"","delay":0,"created_at":"2026-04-08T10:30:00","completed_at":"","approved_at":""},{"id":"j6","store_id":"s1","store_name":"강남 1호점","store_address":"서울 강남구 테헤란로 123","owner_name":"김점주","owner_phone":"010-1111-2222","lat":37.4985,"lng":127.028,"type":"AS방문","subtype":"POS 단말기","driver_id":"d4","driver_name":"박민준","partner":"ABC협력사","status":"COMPLETED","scheduled_date":"2026-04-07","scheduled_time":"10:00","checklist":[{"id":1,"label":"증상 청취","checked":true,"na":false},{"id":2,"label":"하드웨어 점검","checked":true,"na":false},{"id":3,"label":"소프트웨어 점검","checked":true,"na":false},{"id":4,"label":"수리 완료 확인","checked":true,"na":false},{"id":5,"label":"테스트 실행","checked":true,"na":false}],"photos":["photo1.jpg","photo2.jpg"],"signature":true,"note":"프린터 헤드 교체 완료.","eta":"10:00","delay":0,"created_at":"2026-04-07T09:00:00","completed_at":"2026-04-07T11:30:00","approved_at":""}],
+  drivers: [{"id":"d1","name":"홍길동","phone":"010-1234-5678","partner":"ABC협력사","status":"ON_DUTY","lat":37.4985,"lng":127.0277,"fcm_token":"fcm_d1","created_at":"2026-01-01"},{"id":"d2","name":"이영희","phone":"010-2345-6789","partner":"ABC협력사","status":"ON_DUTY","lat":37.4893,"lng":127.0036,"fcm_token":"fcm_d2","created_at":"2026-01-01"},{"id":"d3","name":"김철수","phone":"010-3456-7890","partner":"DEF협력사","status":"ON_DUTY","lat":37.4925,"lng":127.0612,"fcm_token":"fcm_d3","created_at":"2026-01-01"},{"id":"d4","name":"박민준","phone":"010-4567-8901","partner":"ABC협력사","status":"AVAILABLE","lat":37.5005,"lng":127.0367,"fcm_token":"fcm_d4","created_at":"2026-01-01"},{"id":"d5","name":"최지수","phone":"010-5678-9012","partner":"GHI협력사","status":"AVAILABLE","lat":37.5479,"lng":126.91,"fcm_token":"fcm_d5","created_at":"2026-01-01"},{"id":"d6","name":"정수진","phone":"010-6789-0123","partner":"DEF협력사","status":"OFF","lat":37.5564,"lng":126.937,"fcm_token":"fcm_d6","created_at":"2026-01-01"}],
+  stores: [{"id":"s1","name":"강남 1호점","address":"서울 강남구 테헤란로 123","owner_name":"김점주","owner_phone":"010-1111-2222","lat":37.4985,"lng":127.028,"partner":"ABC협력사"},{"id":"s2","name":"서초 2호점","address":"서울 서초구 서초대로 456","owner_name":"이사장","owner_phone":"010-2222-3333","lat":37.487,"lng":127.005,"partner":"ABC협력사"},{"id":"s3","name":"대치 3호점","address":"서울 강남구 대치동 789","owner_name":"박대표","owner_phone":"010-3333-4444","lat":37.4924,"lng":127.0617,"partner":"DEF협력사"},{"id":"s4","name":"역삼 4호점","address":"서울 강남구 역삼로 101","owner_name":"최사장","owner_phone":"010-4444-5555","lat":37.5,"lng":127.037,"partner":"ABC협력사"},{"id":"s5","name":"마포 5호점","address":"서울 마포구 마포대로 202","owner_name":"정대표","owner_phone":"010-5555-6666","lat":37.549,"lng":126.916,"partner":"GHI협력사"},{"id":"s6","name":"홍대 6호점","address":"서울 마포구 홍익로 303","owner_name":"강점주","owner_phone":"010-6666-7777","lat":37.557,"lng":126.925,"partner":"DEF협력사"},{"id":"s7","name":"신촌 7호점","address":"서울 서대문구 신촌로 404","owner_name":"윤사장","owner_phone":"010-7777-8888","lat":37.556,"lng":126.938,"partner":"DEF협력사"},{"id":"s8","name":"합정 8호점","address":"서울 마포구 합정동 505","owner_name":"임대표","owner_phone":"010-8888-9999","lat":37.549,"lng":126.9,"partner":"GHI협력사"}],
+  issues: [{"id":"i1","job_id":"j1","store_name":"강남 1호점","driver_name":"홍길동","type":"설치 불가","desc":"콘센트 위치 불일치로 연장선 필요","priority":"P0","status":"PENDING","created_at":"2026-04-08T14:23:00"},{"id":"i2","job_id":"j2","store_name":"서초 2호점","driver_name":"이영희","type":"고객 부재","desc":"점주 연락 두절, 30분 대기 중","priority":"P0","status":"PENDING","created_at":"2026-04-08T13:45:00"},{"id":"i3","job_id":"j3","store_name":"대치 3호점","driver_name":"김철수","type":"부품 누락","desc":"어댑터 미지참, 물류팀 긴급 요청","priority":"P1","status":"PROCESSING","created_at":"2026-04-08T12:30:00"}],
+  history: [{"id":"h1","store_id":"s1","job_id":"j6","store_name":"강남 1호점","type":"AS방문","driver_name":"박민준","status":"COMPLETED","completed_at":"2026-04-07T11:30:00","note":"프린터 헤드 교체","photos":["photo1.jpg","photo2.jpg"]},{"id":"h2","store_id":"s1","job_id":"j0","store_name":"강남 1호점","type":"신규설치","driver_name":"홍길동","status":"APPROVED","completed_at":"2026-03-15T14:00:00","note":"POS 신규 설치 완료","photos":["photo3.jpg"]}],
+  _seq: 100
+}
+
+// 깊은 복사
+const MDB = JSON.parse(JSON.stringify(INIT_DB))
+
+function getDefaultChecklist(type) {
+  const lists = {
+    '신규설치':['설치 위치 확인','전원 콘센트 확인','POS 본체 고정','모니터 케이블 연결','결제 단말기 연결','전원 ON 확인','초기 설정 완료','결제 테스트'],
+    'AS방문':['증상 청취','하드웨어 점검','소프트웨어 점검','수리 완료 확인','테스트 실행'],
+    'POS교체':['기존 POS 데이터 백업','기존 장비 철거','신규 장비 설치','데이터 이전','결제 테스트','영수증 출력 테스트'],
+    '정기점검':['외관 점검','화면 밝기 확인','결제 모듈 점검','영수증 프린터 점검','네트워크 연결 확인','소프트웨어 업데이트'],
+  }
+  return (lists[type]||lists['신규설치']).map((label,i)=>({id:i+1,label,checked:false,na:false}))
+}
+
+async function fetch2(url, opts={}) {
+  const method = (opts.method||'GET').toUpperCase()
+  const body = opts.body ? JSON.parse(opts.body) : null
+  const path = url.replace(window.location.origin + '/api', '').replace('/api','')
+  const res = (data, status=200) => ({ ok:status<400, status, json: async()=>data })
+
+  if (method==='GET' && (path==='' || path==='/dashboard')) {
+    const today = new Date().toISOString().slice(0,10)
+    const tj = MDB.jobs.filter(j=>j.scheduled_date===today)
+    return res({ total:tj.length, completed:tj.filter(j=>['COMPLETED','APPROVED'].includes(j.status)).length, in_progress:tj.filter(j=>['IN_PROGRESS','ARRIVED','DRIVING_TO'].includes(j.status)).length, unassigned:tj.filter(j=>j.status==='UNASSIGNED').length, urgent_issues:MDB.issues.filter(i=>i.status==='PENDING'&&i.priority==='P0').length, drivers_active:MDB.drivers.filter(d=>d.status==='ON_DUTY').length })
+  }
+  if (method==='GET' && path.startsWith('/jobs') && !path.match(/\/jobs\/.+\//) && !path.match(/\/jobs\/[^?]+$/)) {
+    const qs = path.includes('?') ? path.split('?')[1] : ''
+    const params = new URLSearchParams(qs)
+    let list = [...MDB.jobs]
+    if (params.get('date')) list = list.filter(j=>j.scheduled_date===params.get('date'))
+    if (params.get('status')) list = list.filter(j=>j.status===params.get('status'))
+    if (params.get('driver_id')) list = list.filter(j=>j.driver_id===params.get('driver_id'))
+    return res(list)
+  }
+  if (method==='GET' && path.match(/^\/jobs\/[^/?]+$/)) {
+    const id = path.split('/').pop()
+    const j = MDB.jobs.find(x=>x.id===id)
+    return j ? res(j) : res({error:'not found'},404)
+  }
+  if (method==='POST' && (path==='/jobs' || path==='/jobs/')) {
+    const store = MDB.stores.find(s=>s.id===body.store_id)
+    const j = { id:'j'+(MDB._seq++), store_id:body.store_id, store_name:store?.name||body.store_name||'', store_address:store?.address||'', owner_name:store?.owner_name||'', owner_phone:store?.owner_phone||'', lat:store?.lat||37.5665, lng:store?.lng||126.978, type:body.type, subtype:body.subtype||'', driver_id:null, driver_name:'', partner:'', status:'UNASSIGNED', scheduled_date:body.scheduled_date, scheduled_time:body.scheduled_time||'09:00', checklist:getDefaultChecklist(body.type), photos:[], signature:false, note:body.note||'', eta:'', delay:0, created_at:new Date().toISOString(), completed_at:'', approved_at:'' }
+    MDB.jobs.push(j); return res(j,201)
+  }
+  if (method==='POST' && path==='/jobs/auto-assign') {
+    const unassigned = MDB.jobs.filter(j=>j.status==='UNASSIGNED')
+    const available = MDB.drivers.filter(d=>d.status!=='OFF')
+    let assigned=0
+    for(const job of unassigned){
+      if(!available.length) continue
+      const best=available.reduce((p,c)=>Math.hypot(c.lat-job.lat,c.lng-job.lng)<Math.hypot(p.lat-job.lat,p.lng-job.lng)?c:p,available[0])
+      if(!best) continue
+      job.driver_id=best.id; job.driver_name=best.name; job.partner=best.partner; job.status='DISPATCHED'; job.eta=job.scheduled_time
+      if(best.status==='AVAILABLE') best.status='ON_DUTY'
+      assigned++
+    }
+    return res({assigned,total:unassigned.length})
+  }
+  if (method==='POST' && path.match(/^\/jobs\/.+\/assign$/)) {
+    const id=path.split('/')[2]; const j=MDB.jobs.find(x=>x.id===id); if(!j) return res({error:'not found'},404)
+    const d=MDB.drivers.find(x=>x.id===body.driver_id); if(!d) return res({error:'driver not found'},404)
+    j.driver_id=d.id; j.driver_name=d.name; j.partner=d.partner; j.status='DISPATCHED'; j.eta=j.scheduled_time
+    if(d.status==='AVAILABLE') d.status='ON_DUTY'; return res(j)
+  }
+  if (method==='PATCH' && path.match(/^\/jobs\/.+\/status$/)) {
+    const id=path.split('/')[2]; const j=MDB.jobs.find(x=>x.id===id); if(!j) return res({error:'not found'},404)
+    const allowed={DISPATCHED:['DRIVING_TO','CANCELLED'],DRIVING_TO:['ARRIVED','CANCELLED'],ARRIVED:['IN_PROGRESS'],IN_PROGRESS:['COMPLETED','CANCELLED'],COMPLETED:['APPROVED','REJECTED'],REJECTED:['IN_PROGRESS']}
+    if(!allowed[j.status]?.includes(body.status)) return res({error:j.status+' → '+body.status+' 전환 불가'},422)
+    j.status=body.status
+    if(body.status==='COMPLETED'){ j.completed_at=new Date().toISOString(); MDB.history.push({id:'h'+Date.now(),store_id:j.store_id,job_id:j.id,store_name:j.store_name,type:j.type,driver_name:j.driver_name,status:'COMPLETED',completed_at:j.completed_at,note:j.note,photos:j.photos}) }
+    if(body.status==='APPROVED'){ j.approved_at=new Date().toISOString(); const h=MDB.history.find(x=>x.job_id===j.id); if(h) h.status='APPROVED' }
+    return res(j)
+  }
+  if (method==='PATCH' && path.match(/^\/jobs\/.+\/checklist$/)) {
+    const id=path.split('/')[2]; const j=MDB.jobs.find(x=>x.id===id); if(!j) return res({error:'not found'},404)
+    j.checklist=body.checklist; return res(j)
+  }
+  if (method==='POST' && path.match(/^\/jobs\/.+\/photos$/)) {
+    const id=path.split('/')[2]; const j=MDB.jobs.find(x=>x.id===id); if(!j) return res({error:'not found'},404)
+    j.photos.push(body.photo_url||'photo_'+Date.now()+'.jpg'); return res(j)
+  }
+  if (method==='POST' && path.match(/^\/jobs\/.+\/signature$/)) {
+    const id=path.split('/')[2]; const j=MDB.jobs.find(x=>x.id===id); if(!j) return res({error:'not found'},404)
+    j.signature=true; return res(j)
+  }
+  if (method==='GET' && path==='/drivers') return res(MDB.drivers)
+  if (method==='POST' && path==='/drivers') {
+    const d={id:'d_'+Date.now(),name:body.name,phone:body.phone,partner:body.partner,status:'AVAILABLE',lat:37.5665,lng:126.978,fcm_token:'',created_at:new Date().toISOString()}
+    MDB.drivers.push(d); return res(d,201)
+  }
+  if (method==='PATCH' && path.match(/^\/drivers\/.+$/)) {
+    const id=path.split('/').pop(); const d=MDB.drivers.find(x=>x.id===id); if(!d) return res({error:'not found'},404)
+    Object.assign(d,body); return res(d)
+  }
+  if (method==='DELETE' && path.match(/^\/drivers\/.+$/)) {
+    const id=path.split('/').pop(); const idx=MDB.drivers.findIndex(x=>x.id===id); if(idx<0) return res({error:'not found'},404)
+    MDB.drivers.splice(idx,1); return res({ok:true})
+  }
+  if (method==='GET' && path==='/stores') return res(MDB.stores)
+  if (method==='POST' && path==='/stores') {
+    const s={id:'s_'+Date.now(),name:body.name,address:body.address,owner_name:body.owner_name,owner_phone:body.owner_phone,lat:body.lat||37.5665,lng:body.lng||126.978,partner:body.partner||''}
+    MDB.stores.push(s); return res(s,201)
+  }
+  if (method==='DELETE' && path.match(/^\/stores\/.+$/)) {
+    const id=path.split('/').pop(); const idx=MDB.stores.findIndex(x=>x.id===id); if(idx<0) return res({error:'not found'},404)
+    MDB.stores.splice(idx,1); return res({ok:true})
+  }
+  if (method==='GET' && path==='/issues') return res(MDB.issues)
+  if (method==='POST' && path==='/issues') {
+    const j=MDB.jobs.find(x=>x.id===body.job_id)
+    const issue={id:'i_'+Date.now(),job_id:body.job_id||'',store_name:j?.store_name||body.store_name||'',driver_name:j?.driver_name||body.driver_name||'',type:body.type,desc:body.desc||body.type+' 이슈 발생',priority:body.priority||'P1',status:'PENDING',created_at:new Date().toISOString()}
+    MDB.issues.push(issue); return res(issue,201)
+  }
+  if (method==='PATCH' && path.match(/^\/issues\/.+$/)) {
+    const id=path.split('/').pop(); const issue=MDB.issues.find(x=>x.id===id); if(!issue) return res({error:'not found'},404)
+    Object.assign(issue,body); return res(issue)
+  }
+  if (method==='GET' && path.startsWith('/history')) {
+    const qs=path.includes('?')?path.split('?')[1]:''; const params=new URLSearchParams(qs)
+    let list=[...MDB.history].sort((a,b)=>b.completed_at.localeCompare(a.completed_at))
+    if(params.get('store_id')) list=list.filter(h=>h.store_id===params.get('store_id'))
+    return res(list)
+  }
+  console.warn('MOCK API: unhandled', method, path)
+  return res({error:'not found'},404)
+}
+// ============================================================
+
 
 async function loadAll() {
-  const [j,d,s,i,h,dash] = await Promise.all([
-    fetch2(API+'/jobs?date=2026-04-08').then(r=>r.json()),
-    fetch2(API+'/drivers').then(r=>r.json()),
-    fetch2(API+'/stores').then(r=>r.json()),
-    fetch2(API+'/issues').then(r=>r.json()),
-    fetch2(API+'/history').then(r=>r.json()),
-    fetch2(API+'/dashboard').then(r=>r.json()),
-  ])
-  S.jobs=j; S.drivers=d; S.stores=s; S.issues=i; S.history=h; S.dashboard=dash
+  // STATIC MODE: MDB에서 직접 로드
+  const today = new Date().toISOString().slice(0,10)
+  S.jobs = MDB.jobs
+  S.drivers = MDB.drivers
+  S.stores = MDB.stores
+  S.issues = MDB.issues
+  S.history = MDB.history
+  const tj = MDB.jobs.filter(j=>j.scheduled_date===today)
+  S.dashboard = {
+    total: tj.length,
+    completed: tj.filter(j=>['COMPLETED','APPROVED'].includes(j.status)).length,
+    in_progress: tj.filter(j=>['IN_PROGRESS','ARRIVED','DRIVING_TO'].includes(j.status)).length,
+    unassigned: tj.filter(j=>j.status==='UNASSIGNED').length,
+    urgent_issues: MDB.issues.filter(i=>i.status==='PENDING'&&i.priority==='P0').length,
+    drivers_active: MDB.drivers.filter(d=>d.status==='ON_DUTY').length,
+  }
   updateBadges()
 }
 
@@ -1790,231 +1935,6 @@ setInterval(async()=>{
   await loadAll()
   render()
 },30000)
-
-// ========== MOCK API (GitHub Pages 정적 버전) ==========
-async function fetch2(url, opts={}) {
-  const method = (opts.method||'GET').toUpperCase()
-  const body = opts.body ? JSON.parse(opts.body) : null
-  const path = url.replace(window.location.origin + '/api', '')
-  
-  // 응답 생성 헬퍼
-  const res = (data, status=200) => ({
-    ok: status < 400,
-    status,
-    json: async () => data
-  })
-  
-  // GET /dashboard
-  if (method==='GET' && path==='/dashboard') {
-    const today = new Date().toISOString().slice(0,10)
-    const tj = DB.jobs.filter(j=>j.scheduled_date===today)
-    return res({
-      total: tj.length,
-      completed: tj.filter(j=>['COMPLETED','APPROVED'].includes(j.status)).length,
-      in_progress: tj.filter(j=>['IN_PROGRESS','ARRIVED','DRIVING_TO'].includes(j.status)).length,
-      unassigned: tj.filter(j=>j.status==='UNASSIGNED').length,
-      urgent_issues: DB.issues.filter(i=>i.status==='PENDING'&&i.priority==='P0').length,
-      drivers_active: DB.drivers.filter(d=>d.status==='ON_DUTY').length,
-    })
-  }
-  
-  // GET /jobs
-  if (method==='GET' && path.startsWith('/jobs') && !path.match(/\/jobs\/.+/)) {
-    const params = new URLSearchParams(path.includes('?') ? path.split('?')[1] : '')
-    let list = [...DB.jobs]
-    if (params.get('date')) list = list.filter(j=>j.scheduled_date===params.get('date'))
-    if (params.get('status')) list = list.filter(j=>j.status===params.get('status'))
-    if (params.get('driver_id')) list = list.filter(j=>j.driver_id===params.get('driver_id'))
-    return res(list)
-  }
-  
-  // GET /jobs/:id
-  if (method==='GET' && path.match(/^\/jobs\/[^/]+$/)) {
-    const id = path.split('/')[2]
-    const j = DB.jobs.find(x=>x.id===id)
-    return j ? res(j) : res({error:'not found'}, 404)
-  }
-  
-  // POST /jobs
-  if (method==='POST' && path==='/jobs') {
-    const store = DB.stores.find(s=>s.id===body.store_id)
-    const j = {
-      id: 'j'+(++DB._jobSeq),
-      store_id: body.store_id, store_name: store?.name||body.store_name||'',
-      store_address: store?.address||body.store_address||'',
-      owner_name: store?.owner_name||body.owner_name||'',
-      owner_phone: store?.owner_phone||body.owner_phone||'',
-      lat: store?.lat||37.5665, lng: store?.lng||126.9780,
-      type: body.type, subtype: body.subtype||'',
-      driver_id: null, driver_name: '', partner: '',
-      status: 'UNASSIGNED',
-      scheduled_date: body.scheduled_date, scheduled_time: body.scheduled_time||'09:00',
-      checklist: getDefaultChecklist(body.type),
-      photos: [], signature: false, note: body.note||'',
-      eta: '', delay: 0, created_at: new Date().toISOString(), completed_at: '', approved_at: ''
-    }
-    DB.jobs.push(j)
-    return res(j, 201)
-  }
-  
-  // POST /jobs/auto-assign
-  if (method==='POST' && path==='/jobs/auto-assign') {
-    const unassigned = DB.jobs.filter(j=>j.status==='UNASSIGNED')
-    const available = DB.drivers.filter(d=>d.status!=='OFF')
-    let assigned = 0
-    for (const job of unassigned) {
-      if (!available.length) continue
-      const best = available.reduce((p,c) =>
-        Math.hypot(c.lat-job.lat,c.lng-job.lng) < Math.hypot(p.lat-job.lat,p.lng-job.lng) ? c : p
-      , available[0])
-      if (!best) continue
-      job.driver_id = best.id; job.driver_name = best.name
-      job.partner = best.partner; job.status = 'DISPATCHED'; job.eta = job.scheduled_time
-      if (best.status==='AVAILABLE') best.status = 'ON_DUTY'
-      assigned++
-    }
-    return res({ assigned, total: unassigned.length })
-  }
-  
-  // POST /jobs/:id/assign
-  if (method==='POST' && path.match(/^\/jobs\/.+\/assign$/)) {
-    const id = path.split('/')[2]
-    const j = DB.jobs.find(x=>x.id===id)
-    if (!j) return res({error:'not found'}, 404)
-    const d = DB.drivers.find(x=>x.id===body.driver_id)
-    if (!d) return res({error:'driver not found'}, 404)
-    j.driver_id = d.id; j.driver_name = d.name; j.partner = d.partner
-    j.status = 'DISPATCHED'; j.eta = j.scheduled_time
-    if (d.status==='AVAILABLE') d.status = 'ON_DUTY'
-    return res(j)
-  }
-  
-  // PATCH /jobs/:id/status
-  if (method==='PATCH' && path.match(/^\/jobs\/.+\/status$/)) {
-    const id = path.split('/')[2]
-    const j = DB.jobs.find(x=>x.id===id)
-    if (!j) return res({error:'not found'}, 404)
-    const allowed = {DISPATCHED:['DRIVING_TO','CANCELLED'],DRIVING_TO:['ARRIVED','CANCELLED'],ARRIVED:['IN_PROGRESS'],IN_PROGRESS:['COMPLETED','CANCELLED'],COMPLETED:['APPROVED','REJECTED'],REJECTED:['IN_PROGRESS']}
-    if (!allowed[j.status]?.includes(body.status)) return res({error:j.status+' → '+body.status+' 전환 불가'}, 422)
-    j.status = body.status
-    if (body.status==='COMPLETED') {
-      j.completed_at = new Date().toISOString()
-      DB.history.push({id:'h'+Date.now(),store_id:j.store_id,job_id:j.id,store_name:j.store_name,type:j.type,driver_name:j.driver_name,status:'COMPLETED',completed_at:j.completed_at,note:j.note,photos:j.photos})
-    }
-    if (body.status==='APPROVED') {
-      j.approved_at = new Date().toISOString()
-      const h = DB.history.find(x=>x.job_id===j.id)
-      if (h) h.status = 'APPROVED'
-    }
-    return res(j)
-  }
-  
-  // PATCH /jobs/:id/checklist
-  if (method==='PATCH' && path.match(/^\/jobs\/.+\/checklist$/)) {
-    const id = path.split('/')[2]
-    const j = DB.jobs.find(x=>x.id===id)
-    if (!j) return res({error:'not found'}, 404)
-    j.checklist = body.checklist
-    return res(j)
-  }
-  
-  // POST /jobs/:id/photos
-  if (method==='POST' && path.match(/^\/jobs\/.+\/photos$/)) {
-    const id = path.split('/')[2]
-    const j = DB.jobs.find(x=>x.id===id)
-    if (!j) return res({error:'not found'}, 404)
-    j.photos.push(body.photo_url || 'photo_'+Date.now()+'.jpg')
-    return res(j)
-  }
-  
-  // POST /jobs/:id/signature
-  if (method==='POST' && path.match(/^\/jobs\/.+\/signature$/)) {
-    const id = path.split('/')[2]
-    const j = DB.jobs.find(x=>x.id===id)
-    if (!j) return res({error:'not found'}, 404)
-    j.signature = true
-    return res(j)
-  }
-  
-  // GET /drivers
-  if (method==='GET' && path==='/drivers') return res(DB.drivers)
-  
-  // POST /drivers
-  if (method==='POST' && path==='/drivers') {
-    const d = {id:'d_'+Date.now(),name:body.name,phone:body.phone,partner:body.partner,status:'AVAILABLE',lat:37.5665,lng:126.9780,fcm_token:'',created_at:new Date().toISOString()}
-    DB.drivers.push(d)
-    return res(d, 201)
-  }
-  
-  // PATCH /drivers/:id
-  if (method==='PATCH' && path.match(/^\/drivers\/.+$/)) {
-    const id = path.split('/')[2]
-    const d = DB.drivers.find(x=>x.id===id)
-    if (!d) return res({error:'not found'}, 404)
-    Object.assign(d, body)
-    return res(d)
-  }
-  
-  // DELETE /drivers/:id
-  if (method==='DELETE' && path.match(/^\/drivers\/.+$/)) {
-    const id = path.split('/')[2]
-    const idx = DB.drivers.findIndex(x=>x.id===id)
-    if (idx<0) return res({error:'not found'}, 404)
-    DB.drivers.splice(idx,1)
-    return res({ok:true})
-  }
-  
-  // GET /stores
-  if (method==='GET' && path==='/stores') return res(DB.stores)
-  
-  // POST /stores
-  if (method==='POST' && path==='/stores') {
-    const s = {id:'s_'+Date.now(),name:body.name,address:body.address,owner_name:body.owner_name,owner_phone:body.owner_phone,lat:body.lat||37.5665,lng:body.lng||126.9780,partner:body.partner||''}
-    DB.stores.push(s)
-    return res(s, 201)
-  }
-  
-  // DELETE /stores/:id
-  if (method==='DELETE' && path.match(/^\/stores\/.+$/)) {
-    const id = path.split('/')[2]
-    const idx = DB.stores.findIndex(x=>x.id===id)
-    if (idx<0) return res({error:'not found'}, 404)
-    DB.stores.splice(idx,1)
-    return res({ok:true})
-  }
-  
-  // GET /issues
-  if (method==='GET' && path==='/issues') return res(DB.issues)
-  
-  // POST /issues
-  if (method==='POST' && path==='/issues') {
-    const j = DB.jobs.find(x=>x.id===body.job_id)
-    const issue = {id:'i_'+Date.now(),job_id:body.job_id,store_name:j?.store_name||body.store_name||'',driver_name:j?.driver_name||body.driver_name||'',type:body.type,desc:body.desc||body.type+' 이슈 발생',priority:body.priority||'P1',status:'PENDING',created_at:new Date().toISOString()}
-    DB.issues.push(issue)
-    return res(issue, 201)
-  }
-  
-  // PATCH /issues/:id
-  if (method==='PATCH' && path.match(/^\/issues\/.+$/)) {
-    const id = path.split('/')[2]
-    const issue = DB.issues.find(x=>x.id===id)
-    if (!issue) return res({error:'not found'}, 404)
-    Object.assign(issue, body)
-    return res(issue)
-  }
-  
-  // GET /history
-  if (method==='GET' && path.startsWith('/history')) {
-    const params = new URLSearchParams(path.includes('?') ? path.split('?')[1] : '')
-    let list = [...DB.history].sort((a,b)=>b.completed_at.localeCompare(a.completed_at))
-    if (params.get('store_id')) list = list.filter(h=>h.store_id===params.get('store_id'))
-    return res(list)
-  }
-  
-  return res({error:'not found'}, 404)
-}
-// ========== END MOCK API ==========
-
 </script>
 </body>
 </html>
