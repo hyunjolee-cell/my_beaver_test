@@ -3,6 +3,15 @@ import { html } from 'hono/html'
 
 const app = new Hono()
 
+// Favicon
+app.get('/favicon.svg', (c) => {
+  c.header('Content-Type', 'image/svg+xml')
+  return c.body(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#1A6EFF"/>
+  <text x="16" y="22" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="18" fill="white">F</text>
+</svg>`)
+})
+
 // Main page - FieldOps Platform
 app.get('/', (c) => {
   return c.html(getMainHTML())
@@ -132,6 +141,7 @@ function getMainHTML(): string {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FieldOps — 설치/A/S 스케줄 배정 운영 플랫폼</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -1264,13 +1274,36 @@ function getAppChecklist() {
       </div>
       <div style="padding:12px 16px;background:#fff;border-top:1px solid var(--neutral-200);display:flex;align-items:center;justify-content:space-between;">
         <div style="font-size:12px;color:var(--neutral-500);"><i class="fas fa-save" style="margin-right:4px;"></i>자동 저장 중</div>
-        <button onclick="\${checkedCount>=4?'appGoTo(\\'photo\\')':\`showToast('남은 항목: \${items.length-checkedCount}개')\`}" class="btn-primary" style="font-size:14px;padding:10px 20px;background:\${checkedCount>=4?'var(--primary)':'var(--neutral-200)'};color:\${checkedCount>=4?'#fff':'var(--neutral-500)'};border:none;border-radius:8px;cursor:pointer;">다음: 사진 →</button>
+        <button onclick="checklistNextStep()" style="font-size:14px;padding:10px 20px;background:\${checkedCount>=4?'var(--primary)':'var(--neutral-200)'};color:\${checkedCount>=4?'#fff':'var(--neutral-500)'};border:none;border-radius:8px;cursor:pointer;">다음: 사진 →</button>
       </div>
     </div>
   \`;
 }
 
 function toggleCheck(i) { checklistState[i] = !checklistState[i]; renderAppScreen(); }
+
+function checklistNextStep() {
+  const done = checklistState.filter(Boolean).length;
+  if (done >= 4) { appGoTo('photo'); }
+  else { showToast('남은 항목: ' + (checklistState.length - done) + '개'); }
+}
+
+function photoNextStep() {
+  if (photoState.some(Boolean)) { appGoTo('signature'); }
+  else { showToast('사진을 최소 1장 추가해주세요'); }
+}
+
+function signatureNextStep() {
+  if (signatureDone) { appGoTo('complete'); }
+  else { showToast('서명을 받아주세요'); }
+}
+
+function completeNextStep() {
+  const checkOk = checklistState.filter(Boolean).length >= 4;
+  const photoOk = photoState.some(Boolean);
+  if (checkOk && photoOk && signatureDone) { finishJob(); }
+  else { showToast('증빙을 모두 완료해주세요'); }
+}
 
 function getAppPhoto() {
   const photoCount = photoState.filter(Boolean).length;
@@ -1294,7 +1327,7 @@ function getAppPhoto() {
         \${photoState.some(p=>!p)?'<div style="background:var(--neutral-50);border-radius:10px;padding:12px;margin-top:8px;"><button onclick="togglePhoto(photoState.indexOf(false))" style="background:#fff;border:1.5px solid var(--primary);color:var(--primary);padding:12px;border-radius:10px;font-size:15px;font-weight:600;width:100%;cursor:pointer;margin-bottom:8px;"><i class="fas fa-camera" style="margin-right:8px;"></i>사진 촬영</button><button onclick="togglePhoto(photoState.indexOf(false))" style="background:#fff;border:1px solid var(--neutral-200);color:var(--neutral-700);padding:12px;border-radius:10px;font-size:14px;width:100%;cursor:pointer;"><i class="fas fa-images" style="margin-right:8px;"></i>갤러리에서 선택</button></div>':''}
       </div>
       <div style="padding:12px 16px;background:#fff;border-top:1px solid var(--neutral-200);display:flex;justify-content:flex-end;">
-        <button onclick="\${photoCount>0?'appGoTo(\\'signature\\')':\`showToast('사진을 최소 1장 추가해주세요')\`}" class="btn-primary" style="font-size:14px;padding:10px 20px;background:\${photoCount>0?'var(--primary)':'var(--neutral-200)'};color:\${photoCount>0?'#fff':'var(--neutral-500)'};border:none;border-radius:8px;cursor:pointer;">다음: 서명 →</button>
+        <button onclick="photoNextStep()" style="font-size:14px;padding:10px 20px;background:\${photoCount>0?'var(--primary)':'var(--neutral-200)'};color:\${photoCount>0?'#fff':'var(--neutral-500)'};border:none;border-radius:8px;cursor:pointer;">다음: 서명 →</button>
       </div>
     </div>
   \`;
@@ -1325,7 +1358,7 @@ function getAppSignature() {
       </div>
       <div style="padding:12px 16px;background:#fff;border-top:1px solid var(--neutral-200);display:flex;gap:8px;">
         <button onclick="appGoTo('photo')" style="background:#fff;border:1px solid var(--neutral-200);color:var(--neutral-700);padding:12px 16px;border-radius:10px;font-size:14px;cursor:pointer;">← 이전</button>
-        <button onclick="\${signatureDone?'appGoTo(\\'complete\\')':\`showToast('서명을 받아주세요')\`}" class="btn-primary" style="flex:1;padding:12px;background:\${signatureDone?'var(--primary)':'var(--neutral-200)'};color:\${signatureDone?'#fff':'var(--neutral-500)'};border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">완료 처리하기 →</button>
+        <button onclick="signatureNextStep()" style="flex:1;padding:12px;background:\${signatureDone?'var(--primary)':'var(--neutral-200)'};color:\${signatureDone?'#fff':'var(--neutral-500)'};border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">완료 처리하기 →</button>
       </div>
     </div>
   \`;
@@ -1363,8 +1396,8 @@ function getAppComplete() {
           </div>
         </div>
         <div style="font-size:13px;color:var(--neutral-500);margin-bottom:20px;">강남 1호점 · POS 설치 · 홍길동</div>
-        <button onclick="\${allDone?\`finishJob()\":\"showToast('증빙을 모두 완료해주세요')\"}" class="app-btn-primary" style="font-size:17px;padding:16px;background:\${allDone?'var(--primary)':'var(--neutral-200)'};color:\${allDone?'#fff':'var(--neutral-500)'};border:none;border-radius:12px;width:100%;cursor:pointer;">
-          \${allDone?'<i class="fas fa-check" style="margin-right:8px;"></i>완료 처리하기':'증빙을 완료해주세요'}
+        <button onclick="completeNextStep()" style="font-size:17px;padding:16px;background:\${allDone?'var(--primary)':'var(--neutral-200)'};color:\${allDone?'#fff':'var(--neutral-500)'};border:none;border-radius:12px;width:100%;cursor:pointer;font-weight:600;">
+          \${allDone?'<i class=\\"fas fa-check\\" style=\\"margin-right:8px;\\"></i>완료 처리하기':'증빙을 완료해주세요'}
         </button>
       </div>
     </div>
